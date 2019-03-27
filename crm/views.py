@@ -5,6 +5,11 @@ from .forms import *
 from django.shortcuts import render, get_object_or_404
 from django.shortcuts import redirect
 from django.db.models import Sum
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import CustomerSerializer
+
 
 now = timezone.now()
 def home(request):
@@ -158,3 +163,12 @@ def register(request):
     else:
         user_form = UserRegistrationForm()
     return render(request,'registration/register.html',{'user_form': user_form})
+
+# Lists all customers 
+class CustomerList(APIView):
+
+    def get(self,request):
+        customers_json = Customer.objects.all()
+        serializer = CustomerSerializer(customers_json, many=True)
+        return Response(serializer.data)
+
